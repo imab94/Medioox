@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Medioox | Tool{% endblock %}
+
+{% block content %}
+<div class="home-title">
+    <h1 class="home-title__title">
+      Enhance Your Videos with Engaging Captions: Share Your Creativity with the World
+    </h1>
+    <h2 class="home-title__subtitle">
+      Elevate your video content with captivating captions. Empower your audience to fully engage with your videos by adding descriptive and compelling text overlays. With our intuitive tools, you can effortlessly create and share your captioned videos, captivating viewers across platforms.
+    </h2>
+  </div>
+  
+<div class="container mycontainer">
+    <div class="upload-container">
+        <div class="form-group choosenFile">
+            <label for="fileInput">Choose File:</label>
+            <input type="file" class="form-control-file" id="fileInput">
+        </div>
+        <div class="form-group makemagicdiv">
+            <label for="textInput">Enter Text:</label>
+            <textarea class="form-control-textarea" id="textInput"></textarea>
+        </div>
+        <button type="button" class="btn btn-upload">Let's Make Magic</button>
+    </div>
+</div>
+{% endblock %}

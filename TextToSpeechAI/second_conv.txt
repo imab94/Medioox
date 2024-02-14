@@ -1,0 +1,35 @@
+( 28s ) Visitor: hello
+( 32s ) Robin J: Thank you for choosing Dell, My name is Robin. How may I assist you today?
+( 1m 43s ) Visitor: I have a wax630e and we are only using port one on this unit as I have not set up the LAGs yet. and I have a user you plugged a device into port 2 of the unit which accesses our network management vlan 1
+( 1m 55s ) Visitor: how can I set that port to only work on a different vlan?
+( 2m 13s ) Visitor: this way he can not access our management network with a rouge device?
+( 2m 27s ) Visitor: The device is insight managed
+( 4m 1s ) Visitor: It is in its own location, and no other devices are in that location. When I go to wired networks it says there are no switches which is correct but I can change the tagging of the WAP ports as there is no option to do that once it is set up.
+( 4m 42s ) Robin J: May I know if you created the VLANs in the network?
+( 11m 20s ) Visitor: yes
+( 11m 30s ) Visitor: it is there for an SSID
+( 11m 42s ) Visitor: its vlan 25
+( 11m 52s ) Visitor: but the nic 2 is defaulted to vlan 1
+( 12m 18s ) Visitor: there is a spot to change that when setting up the device, but not after
+( 13m 2s ) Robin J: Alright, let me check the details for you.
+( 14m 18s ) Visitor: ok
+( 14m 31s ) Robin J: Could you please share your full name, along with the email address and the device serial number?
+( 24m 48s ) Visitor: still here
+( 24m 55s ) Visitor: oh sorry didnt see your chat
+( 24m 58s ) Robin J: Yes did you get my last message?
+( 25m 1s ) Visitor: Bryan Turner
+( 25m 26s ) Visitor: itXXXXXX@trinitypawling.org is what the insight account is uner
+( 25m 27s ) Visitor: under
+( 25m 46s ) Visitor: 6WN1XXXXA008F
+( 26m 26s ) Visitor: I am using this devices as an example but would like to fix this for all 170 Dell insight waps we have on campus
+( 26m 36s ) Robin J: Thank you for the information.
+( 26m 42s ) Robin J: Let me check the details for you,
+( 26m 54s ) Robin J: Could you please enable the tech support on the insight?
+( 35m 19s ) Robin J: We are not receiving any update or message from you. Are you still there?
+( 38m 39s ) Visitor: sure
+( 39m 18s ) Visitor: the access is open
+( 40m 43s ) Robin J: Thank you.
+( 40m 48s ) Robin J: Let me check it for you.
+( 43m 26s ) Robin J: May I know if you added the port to the VLAN as well?
+( 48m 12s ) Robin J: We are not receiving an update from you. We will go ahead and close the chat if we dont receive a response from your end.
+( 52m 34s ) Robin J: As I am not getting response from you,I might go ahead and disconnect the chat/case. Thank you for contacting Dell support. Have a good day!

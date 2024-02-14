@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% block title %}Medioox | Tool{% endblock %}
+
+{% block content %}
+
+<div class="home-title">
+    <h1 class="home-title__title">
+        Transform Audio/Video into Text (transcription) with Advanced AI Technology
+    </h1>
+    <h2 class="home-title__subtitle">
+        Convert your audio recordings into written text (transcription Service) effortlessly using cutting-edge AI technology. Whether it's interviews, lectures, or personal recordings, our advanced AI algorithms ensure accurate and efficient transcription, saving you time and effort. With our intuitive platform, you can easily upload your audio files and receive precise text transcriptions in no time. Experience the power of AI-driven transcription and streamline your workflow today.
+    </h2>
+    <h5>Uploading audio/video file</h5>
+</div>
+
+<form class="pure-form pure-g hide-after-request" id="uploadForm3" enctype="multipart/form-data">
+  <div class="relative">
+    <input id="main_page_text2" title="https://www.instagram.com/p/CL_0NHnKJXb" name="file" type="file" placeholder="Paste link here" autofocus="autofocus" class="form-control input-lg" />
+    <input data-v-c3395e3a="" id="locale" name="locale" type="hidden" value="en" />
+  </div>
+  <div data-v-c3395e3a="">
+    <button data-v-c3395e3a="" type="button" id="submit" class="pure-button pure-button-primary u-fw h-captcha">
+      <span data-v-c3395e3a="">Generate</span>
+    </button>
+  </div>
+</form>
+<div class="overlay" id="overlay"></div>
+<div id="loading-spinner" class="text-center mt-4">
+  <i class="fa fa-spinner"></i>
+  <span>Please wait...</span>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById("submit").addEventListener("click", function(event) {
+      // Prevent the default form submission behavior
+      event.preventDefault();
+
+      // Show overlay
+      document.getElementById("overlay").style.display = "block";
+
+      // Show loading spinner
+      document.getElementById("loading-spinner").style.display = "block";
+
+      // Get the file input element
+      const fileInput = document.getElementById("main_page_text2");
+
+      // Create a FormData object and append the file
+      const formData = new FormData();
+      formData.append("file", fileInput.files[0]);
+
+      // Submit the form via AJAX
+      fetch("/download_audio_to_text", {
+        method: "POST",
+        body: formData
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        // Return response as JSON
+        return response.json();
+      })
+      .then(data => {
+        // Handle response data
+        console.log(data);
+        if (data.status === "success") {
+          // If transcription is successful
+          if (data.english_text !== null || data.hindi_text !== null) {
+            // Create a temporary link to download the text file
+            const blob = new Blob([data.english_text || data.hindi_text], { type: "text/plain" });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "transcription.txt";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+          } else {
+            // If transcription fails for both English and Hindi, display a modal
+            const modal = document.createElement("div");
+            modal.classList.add("modal");
+            modal.innerHTML = `
+              <div class="modal-content">
+                <span class="close">&times;</span>
+                <p>Transcription could not be generated for English or Hindi.</p>
+              </div>
+            `;
+            document.body.appendChild(modal);
+            modal.style.display = "block"; // Display the modal
+            const closeButton = modal.querySelector(".close");
+            closeButton.addEventListener("click", function() {
+              modal.remove();
+            });
+          }
+        } else {
+          // If transcription fails, display an error message
+          alert("Transcription failed. Please try again.");
+        }
+        // Hide overlay and spinner after processing
+        document.getElementById("overlay").style.display = "none";
+        document.getElementById("loading-spinner").style.display = "none";
+      })
+      .catch(error => {
+        // Handle errors
+        console.error("Error:", error);
+        // Hide overlay and spinner on error
+        document.getElementById("overlay").style.display = "none";
+        document.getElementById("loading-spinner").style.display = "none";
+        // Display error message
+        alert("An error occurred while uploading the file.");
+      });
+    });
+  });
+</script>
+
+{% endblock %}

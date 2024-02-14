@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% block title %}Medioox | Tool{% endblock %}
+
+{% block content %}
+<div class="home-title">
+    <h1 class="home-title__title">
+      Download Instagram Reels: Save the Ones You Love Directly to Your Phone
+    </h1>
+    <h2 class="home-title__subtitle">
+      Found an Instagram Reel you adore? No need to worry about it disappearing! With our platform, you can effortlessly download and save your favorite Instagram Reels directly to your phone. Whether it's a hilarious clip, a mesmerizing dance routine, or an inspiring moment, keep it close to you with just a few clicks.
+    </h2>
+</div>
+
+<form id="downloadForm" class="pure-form pure-g hide-after-request" method="post" action="/download">
+<div class="relative">
+  <input
+    id="main_page_text"
+    title="https://www.instagram.com/p/CL_0NHnKJXb"
+    name="link"
+    type="text"
+    placeholder="Paste instagram Reels link here"
+    autofocus="autofocus"
+    class="form-control input-lg"/>
+  <input
+    data-v-c3395e3a=""
+    id="locale"
+    name="locale"
+    type="hidden"
+    value="en"/>
+</div>
+<div data-v-c3395e3a="">
+  <button
+    data-v-c3395e3a=""
+    type="submit"
+    id="submit"
+    class="pure-button pure-button-primary u-fw h-captcha youTubeShorts">
+    <span data-v-c3395e3a="">Download</span>
+  </button>
+</div>
+</form>
+<div class="overlay" id="overlay"></div>
+<div id="loading-spinner" class="text-center mt-4">
+<i class="fa fa-spinner"></i>
+<span>Please wait...</span>
+</div>
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+      document.getElementById("downloadForm").addEventListener("submit", function(event) {
+          // Prevent the default form submission behavior
+          event.preventDefault();
+
+          // Show overlay
+          document.getElementById("overlay").style.display = "block";
+
+          // Show loading spinner
+          document.getElementById("loading-spinner").style.display = "block";
+
+          // Submit the form via AJAX
+          fetch("/download", {
+              method: "POST",
+              body: new FormData(this)
+          })
+          .then(response => {
+              if (!response.ok) {
+                  throw new Error(`HTTP error! Status: ${response.status}`);
+              }
+              return response.blob();
+          })
+          .then(blob => {
+              // Create a Blob, URL, and a download link for the Blob
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = "youtube_story.mp4";
+
+              // Append the download link to the document
+              document.body.appendChild(a);
+
+              // Trigger a click on the download link to start the download
+              a.click();
+
+              // Remove the download link from the document
+              document.body.removeChild(a);
+
+              // Hide overlay and spinner after the download starts
+              document.getElementById("overlay").style.display = "none";
+              document.getElementById("loading-spinner").style.display = "none";
+          })
+          .catch(error => {
+              // Handle errors
+              // console.log("Error======:", error);
+
+              // Hide overlay and spinner on error
+              document.getElementById("overlay").style.display = "none";
+              document.getElementById("loading-spinner").style.display = "none";
+
+             // Display dynamic Bootstrap modal
+             const modal = document.createElement("div");
+             modal.classList.add("modal", "fade");
+             modal.id = "errorModal";
+             modal.setAttribute("tabindex", "-1");
+             modal.setAttribute("role", "dialog");
+             modal.innerHTML = `
+                 <div class="modal-dialog modal-dialog-centered" role="document">
+                     <div class="modal-content">
+                         <div class="modal-header bg-danger">
+                             <h5 id="ModalErrorTitle" class="modal-title font-weight-bold text-white">Error</h5>
+                             <button type="button" class="close outline-none border-none" data-dismiss="modal" aria-label="Close">
+                                 <span aria-hidden="true">&times;</span>
+                             </button>
+                         </div>
+                         <div class="modal-body text-center" style="font-family: 'Roboto', sans-serif; font-weight: 500;">
+                          <i class="fa fa-frown-o fa-5x text-danger" aria-hidden="true"></i>
+                          <p class="modal-title">${error}</p>
+                      </div>                      
+                     </div>
+                 </div>`;
+             document.body.appendChild(modal);
+
+             // Show modal
+             $(modal).modal("show");
+
+             // Remove modal from DOM after it's hidden
+             $(modal).on("hidden.bs.modal", function () {
+                 $(this).remove();
+             });
+          });
+      });
+  });
+</script>
+
+{% endblock %}
