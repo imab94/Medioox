@@ -11,7 +11,7 @@
     </h2>
 </div>
 
-<form id="downloadForm" class="pure-form pure-g hide-after-request" method="post" action="/download">
+<form id="downloadForm4" class="pure-form pure-g hide-after-request" method="post" action="/download">
 <div class="relative">
   <input
     id="main_page_text"
@@ -47,7 +47,7 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", function() {
-      document.getElementById("downloadForm").addEventListener("submit", function(event) {
+      document.getElementById("downloadForm4").addEventListener("submit", function(event) {
           // Prevent the default form submission behavior
           event.preventDefault();
 
@@ -58,7 +58,7 @@
           document.getElementById("loading-spinner").style.display = "block";
 
           // Submit the form via AJAX
-          fetch("/download", {
+          fetch("/download_instagram_reels", {
               method: "POST",
               body: new FormData(this)
           })
@@ -73,7 +73,7 @@
               const url = URL.createObjectURL(blob);
               const a = document.createElement("a");
               a.href = url;
-              a.download = "youtube_story.mp4";
+              a.download = "instagram_story.mp4";
 
               // Append the download link to the document
               document.body.appendChild(a);
@@ -90,7 +90,7 @@
           })
           .catch(error => {
               // Handle errors
-              // console.log("Error======:", error);
+              console.log("Error======:", error);
 
               // Hide overlay and spinner on error
               document.getElementById("overlay").style.display = "none";

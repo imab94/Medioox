@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+{% block title %}Medioox | Tool{% endblock %}
+
+{% block content %}
+<style>
+
+    .pure-form2{
+        display: inline;
+    }
+    /* Style for radio buttons */
+    .radio-buttons {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        margin-bottom: 10px;
+    }
+
+    .radio-buttons label {
+        margin-right: 10px;
+    }
+
+    /* Style for input and button */
+    .input-container {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    #username_input {
+        width:100%;
+        margin-right: 10px;
+    }
+
+    /* Adjust button width as needed */
+    .pure-form2 .instaprofile {
+        width: 100% !important;
+        
+        margin:20px auto !important;
+    }
+
+.pure-form2 .input-container #username_input,#url_input {
+    box-shadow: none;
+    font-size: 100%;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+</style>
+
+
+<div class="home-title">
+    <h1 class="home-title__title">
+        Download Instagram Profile Pictures: Save with Just One Click
+    </h1>
+    <h2 class="home-title__subtitle">
+        Want to save an Instagram profile picture? With our platform, you can easily download profile pictures by simply copying the profile picture URL. It's that simple! Please note that this feature may not apply to private Instagram accounts as we have restricted downloading profile pictures from private accounts.
+    </h2>
+    <div class="download-options">
+        <h5 class="text-center">Choose your way to get the profile picture:</h5>
+       
+    </div>
+</div>
+
+
+<form id="downloadForm6" class="pure-form2 pure-g hide-after-request" method="post" action="/download">
+  <div class="radio-buttons">
+    <label><input type="radio" name="option" value="username" checked> By Username</label>
+    <label><input type="radio" name="option" value="url"> By Profile URL</label>
+  </div>
+  <div class="input-container">
+    <input id="username_input" name="username" type="text" placeholder="Instagram Username" class="form-control input-lg">
+    <input id="url_input" name="url" type="text" placeholder="Instagram Profile URL" class="form-control input-lg" style="display:none;">
+  </div>
+  <button
+  data-v-c3395e3a=""
+  type="submit"
+  id="submit"
+  class="pure-button pure-button-primary u-fw h-captcha instaprofile">
+  <span data-v-c3395e3a="">Download</span>
+</button>
+</form>
+
+<div class="overlay" id="overlay"></div>
+<div id="loading-spinner" class="text-center mt-4">
+  <i class="fa fa-spinner"></i>
+  <span>Hang on...</span>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const usernameInput = document.getElementById("username_input");
+        const urlInput = document.getElementById("url_input");
+    
+        document.querySelectorAll('input[type=radio][name="option"]').forEach((radio) => {
+            radio.addEventListener('change', function() {
+                if (this.value === 'username') {
+                    usernameInput.style.display = 'block';
+                    urlInput.style.display = 'none';
+                    urlInput.value = ''; // Clear the URL input field
+                } else if (this.value === 'url') {
+                    usernameInput.style.display = 'none';
+                    urlInput.style.display = 'block';
+                    usernameInput.value = ''; // Clear the username input field
+                }
+            });
+        });
+    
+        document.getElementById("downloadForm6").addEventListener("submit", function(event) {
+            event.preventDefault();
+            document.getElementById("overlay").style.display = "block";
+            document.getElementById("loading-spinner").style.display = "block";
+    
+            let selectedOption = document.querySelector('input[name="option"]:checked').value;
+            console.log(selectedOption);
+            let inputValue = document.getElementById(selectedOption + "_input").value;
+            // console.log(inputValue);
+            if (selectedOption === 'url') {
+                // Extract username from the URL
+                const url = new URL(inputValue);
+                inputValue = url.pathname.split('/')[1];
+                console.log(inputValue);
+            }
+            const formData = new FormData();
+            formData.append("input_data", inputValue);
+            fetch("/download_instagram_profile_pic", {
+                method: "POST",
+                body: formData,
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.blob();
+            })
+            .then(blob => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = `${inputValue}.zip`; 
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                document.getElementById("overlay").style.display = "none";
+                document.getElementById("loading-spinner").style.display = "none";
+            })
+            .catch(error => {
+                console.log("Error======:", error);
+                document.getElementById("overlay").style.display = "none";
+                document.getElementById("loading-spinner").style.display = "none";
+                const modal = document.createElement("div");
+                modal.classList.add("modal", "fade");
+                modal.id = "errorModal";
+                modal.setAttribute("tabindex", "-1");
+                modal.setAttribute("role", "dialog");
+                modal.innerHTML = `
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header bg-danger">
+                                <h5 id="ModalErrorTitle" class="modal-title font-weight-bold text-white">Error</h5>
+                                <button type="button" class="close outline-none border-none" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body text-center" style="font-family: 'Roboto', sans-serif; font-weight: 500;">
+                                <i class="fa fa-frown-o fa-5x text-danger" aria-hidden="true"></i>
+                                <p class="modal-title">${error}</p>
+                            </div>                      
+                        </div>
+                    </div>`;
+                document.body.appendChild(modal);
+                $(modal).modal("show");
+                $(modal).on("hidden.bs.modal", function () {
+                    $(this).remove();
+                });
+            });
+        });
+    });
+</script>
+
+{% endblock %}

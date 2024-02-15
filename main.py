@@ -3,10 +3,18 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import FileResponse
 from pytube import YouTube
+from instaloader import Instaloader,Post
+import instaloader
 import shutil
 import os
 from TextToSpeechAI.main import main
 from AudioToTranscribe.code import fetch_transcribe
+from dotenv import load_dotenv
+import time
+from urllib.parse import urlparse
+
+
+
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -39,6 +47,26 @@ async def download_youtube_shorts(link: str = Form(...)):
         raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
     
 
+@app.post("/download_instagram_reels")
+async def download_instagram_reels(link: str = Form(...)):
+    try:
+        # Initialize Instaloader
+        L = Instaloader()
+
+        # Load the post
+        post = Post.from_shortcode(L.context, link.split("/")[-2])
+
+        # Download the video
+        L.download_post(post, target="downloads")
+
+        # Provide the downloaded video as a response
+        return FileResponse(f"downloads/{post.date_utc.strftime('%Y-%m-%d_%H-%M-%S')}_UTC.mp4",
+                            media_type="video/mp4", filename=f"{post.date_utc.strftime('%Y-%m-%d_%H-%M-%S')}_UTC.mp4")
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
+    
+    
 @app.post("/upload")
 async def create_upload_file(file: UploadFile = File(...), locale: str = Form(...)):
     upload_dir = 'static/uploads/'
@@ -105,6 +133,14 @@ async def instagram_reels(request: Request, dummy_param: str = None):
         {"request": request}
     )
     
+
+@app.get("/instagram_profiles")
+async def instagram_profiles(request: Request, dummy_param: str = None):
+    return templates.TemplateResponse(
+        "InstagramProfile.html",
+        {"request": request}
+    )
+    
 @app.get('/audio_to_text')
 async def audio_to_text(request: Request, dummy_param: str = None):
     return templates.TemplateResponse(
@@ -149,3 +185,49 @@ async def download_audio_to_text(file: UploadFile = File(...)):
     except Exception as e:
         # Return error response
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/download_instagram_profile_pic")
+async def download_instagram_profile_pic(input_data: str = Form(...)):
+    print("Downloading profile...", input_data)
+    load_dotenv()  # Load environment variables from .env file
+    INSTAGRAM_USERNAME = os.getenv("INSTAGRAM_USERNAME")
+    INSTAGRAM_PASSWORD = os.getenv("INSTAGRAM_PASSWORD")
+    print("credentials----", INSTAGRAM_USERNAME, INSTAGRAM_PASSWORD)
+    L = instaloader.Instaloader()
+
+    # Login to Instagram
+    L.login(INSTAGRAM_USERNAME, INSTAGRAM_PASSWORD)
+
+    try:
+        # Check if input is a URL
+        parsed_url = urlparse(input_data)
+        print("parsed_url===========",parsed_url)
+        if parsed_url.netloc == 'www.instagram.com':
+            username = parsed_url.path.lstrip('/').split('/')[0]
+            print("username========",username)
+        else:
+            # Input is a username
+            username = input_data
+
+        profile = instaloader.Profile.from_username(L.context, username)
+        print("Profile URL: " + profile.profile_pic_url)
+        target_folder = f"images_{username.lower()}"
+        
+        os.makedirs(target_folder, exist_ok=True)
+        
+        count = 0
+        for post in profile.get_posts():
+            if not post.is_video:
+                L.download_post(post, target=target_folder)
+                count += 1
+                if count >= 5:
+                    break
+            time.sleep(2)
+
+        shutil.make_archive(username, 'zip', target_folder)
+        
+        return FileResponse(f"{username}.zip", media_type="application/zip", filename=f"{username}.zip")
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")

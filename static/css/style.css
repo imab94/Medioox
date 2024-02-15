@@ -285,48 +285,6 @@ button, input {
     aspect-ratio: 3/2;
 }
 
-.card {
-    position: relative;
-    overflow: hidden;
-    height: 25rem;
-    margin: 10px auto;
-    background-color: #4d5359;
-    border: 1px solid #4d5359;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-
-  .card img {
-    width: 100%;
-    object-fit: cover; 
-    opacity: 0.6; 
-  }
-
-  .card:hover {
-    box-shadow: 0 4px 8px 10px rgba(30, 29, 29, 0.5);
-    cursor: pointer;
-  }
-
-  .card-body {
-    position: absolute;
-    bottom: 3px;
-    height: 15rem;
-    left: 0;
-    right: 0;
-    padding: 1rem;
-  }
-
-  .card-title{
-    color: #fff;
-    text-align: center;
-    margin-top: 2rem;
-  }
-
-  .card-text{
-    color: #fff;
-    text-align: center;
-  }
-
   .modal-content .close {
     outline: none;
     border: none;
@@ -444,3 +402,50 @@ button, input {
     padding:10px;
     background-color: #dfe3e7;
 }
+
+.card {
+    position: relative;
+    overflow: hidden;
+    margin: 24px auto;
+    background-color: #4d5359;
+    border: 1px solid #4d5359;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    height: 93%; /* Ensure all cards take up the full height of their parent container */
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .card img {
+    width: 100%;
+    object-fit: cover;
+    opacity: 0.6;
+  }
+  
+  .card:hover {
+    box-shadow: 0 4px 8px 10px rgba(30, 29, 29, 0.5);
+    cursor: pointer;
+  }
+  
+  .card-body {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; /* Allow the card body to grow vertically */
+  }
+  
+  .card-title {
+    color: #fff;
+    text-align: center;
+  }
+  
+  .card-text {
+    color: #fff;
+    text-align: center;
+    flex-grow: 1; /* Allow the text to grow to fill the remaining space */
+  }
+  
+.btn {
+align-self: center; /* Center the button horizontally */
+}
+
