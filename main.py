@@ -12,8 +12,7 @@ from AudioToTranscribe.code import fetch_transcribe
 from dotenv import load_dotenv
 import time
 from urllib.parse import urlparse
-
-
+from VideoEmbedding.video import embedding_video
 
 
 app = FastAPI()
@@ -231,3 +230,16 @@ async def download_instagram_profile_pic(input_data: str = Form(...)):
     
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
+    
+    
+@app.post("/embedded_video")
+async def embedded_video(file: UploadFile = File(...), text: str = Form(...)):
+    # Save the uploaded video file temporarily
+    with open(file.filename, "wb") as video_file:
+        video_file.write(await file.read())   
+    # Call the embedding_video function
+    embedding_video(file.filename, text)
+    
+    # Return the path to the embedded video for download
+    video_path = "output.mp4"
+    return FileResponse(video_path, media_type="video/mp4", filename="output.mp4")

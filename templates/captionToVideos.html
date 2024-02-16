@@ -2,6 +2,7 @@
 {% block title %}Medioox | Tool{% endblock %}
 
 {% block content %}
+
 <div class="home-title">
     <h1 class="home-title__title">
       Enhance Your Videos with Engaging Captions: Share Your Creativity with the World
@@ -15,13 +16,102 @@
     <div class="upload-container">
         <div class="form-group choosenFile">
             <label for="fileInput">Choose File:</label>
-            <input type="file" class="form-control-file" id="fileInput">
+            <input type="file" class="form-control-file" id="fileInput" required>
         </div>
         <div class="form-group makemagicdiv">
             <label for="textInput">Enter Text:</label>
-            <textarea class="form-control-textarea" id="textInput"></textarea>
+            <textarea class="form-control-textarea" id="textInput" required></textarea>
         </div>
-        <button type="button" class="btn btn-upload">Let's Make Magic</button>
+        <button type="button" class="btn btn-upload" id="embeddingVideos">Let's Make Magic</button>
     </div>
 </div>
+
+<div class="overlay" id="overlay"></div>
+<div id="loading-spinner" class="text-center mt-4">
+<i class="fa fa-spinner"></i>
+<span>Please wait... </span>
+</div>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const fileInput = document.getElementById("fileInput");
+      const textInput = document.getElementById("textInput");
+  
+      document.querySelector('#embeddingVideos').addEventListener("click", function() {
+          const file = fileInput.files[0];
+          const text = textInput.value;
+  
+          const formData = new FormData();
+          formData.append("file", file);
+          formData.append("text", text);
+  
+          document.getElementById("overlay").style.display = "block";
+          document.getElementById("loading-spinner").style.display = "block";
+  
+          fetch("/embedded_video", {
+              method: "POST",
+              body: formData,
+          })
+          .then(response => {
+              if (!response.ok) {
+                  throw new Error(`HTTP error! Status: ${response.status}`);
+              }
+              return response.blob();
+          })
+          .then(blob => {
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = "result.mp4";
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+              document.getElementById("overlay").style.display = "none";
+              document.getElementById("loading-spinner").style.display = "none";
+              fileInput.value = '';
+              textInput.value = '';
+          })
+          .catch(error => {
+  
+              // Hide overlay and spinner on error
+              document.getElementById("overlay").style.display = "none";
+              document.getElementById("loading-spinner").style.display = "none";
+  
+             // Display dynamic Bootstrap modal
+             const modal = document.createElement("div");
+             modal.classList.add("modal", "fade");
+             modal.id = "errorModal";
+             modal.setAttribute("tabindex", "-1");
+             modal.setAttribute("role", "dialog");
+             modal.innerHTML = `
+                 <div class="modal-dialog modal-dialog-centered" role="document">
+                     <div class="modal-content">
+                         <div class="modal-header bg-danger">
+                             <h5 id="ModalErrorTitle" class="modal-title font-weight-bold text-white">Error</h5>
+                             <button type="button" class="close outline-none border-none" data-dismiss="modal" aria-label="Close">
+                                 <span aria-hidden="true">&times;</span>
+                             </button>
+                         </div>
+                         <div class="modal-body text-center" style="font-family: 'Roboto', sans-serif; font-weight: 500;">
+                          <i class="fa fa-frown-o fa-5x text-danger" aria-hidden="true"></i>
+                          <p class="modal-title">${error}</p>
+                      </div>                      
+                     </div>
+                 </div>`;
+             document.body.appendChild(modal);
+  
+             // Show modal
+             $(modal).modal("show");
+  
+             // Remove modal from DOM after it's hidden
+             $(modal).on("hidden.bs.modal", function () {
+                 $(this).remove();
+             });
+          });
+      });
+  });
+
+  </script>
+
 {% endblock %}

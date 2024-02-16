@@ -97,11 +97,11 @@
                 if (this.value === 'username') {
                     usernameInput.style.display = 'block';
                     urlInput.style.display = 'none';
-                    urlInput.value = ''; // Clear the URL input field
+                    urlInput.value = ''; 
                 } else if (this.value === 'url') {
                     usernameInput.style.display = 'none';
                     urlInput.style.display = 'block';
-                    usernameInput.value = ''; // Clear the username input field
+                    usernameInput.value = ''; 
                 }
             });
         });
@@ -112,7 +112,7 @@
             document.getElementById("loading-spinner").style.display = "block";
     
             let selectedOption = document.querySelector('input[name="option"]:checked').value;
-            console.log(selectedOption);
+            // console.log(selectedOption);
             let inputValue = document.getElementById(selectedOption + "_input").value;
             // console.log(inputValue);
             if (selectedOption === 'url') {
@@ -145,7 +145,7 @@
                 document.getElementById("loading-spinner").style.display = "none";
             })
             .catch(error => {
-                console.log("Error======:", error);
+                //console.log("Error======:", error);
                 document.getElementById("overlay").style.display = "none";
                 document.getElementById("loading-spinner").style.display = "none";
                 const modal = document.createElement("div");
