@@ -36,7 +36,7 @@ body{
 
 .social-icons:hover {
     font-size: 20px;
-    color: #3498db;
+    color: #3498db !important;
     cursor: pointer;
 }
 

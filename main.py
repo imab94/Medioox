@@ -236,9 +236,13 @@ async def download_instagram_profile_pic(input_data: str = Form(...)):
 async def embedded_video(file: UploadFile = File(...), text: str = Form(...)):
     # Save the uploaded video file temporarily
     with open(file.filename, "wb") as video_file:
-        video_file.write(await file.read())   
+        video_file.write(await file.read())
+    
     # Call the embedding_video function
     embedding_video(file.filename, text)
+    
+    # Optionally, you can remove the temporary file
+    os.remove(file.filename)
     
     # Return the path to the embedded video for download
     video_path = "output.mp4"
