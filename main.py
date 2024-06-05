@@ -6,6 +6,7 @@ from pytube import YouTube
 from instaloader import Instaloader,Post
 import instaloader
 import shutil
+import uvicorn
 import os
 from TextToSpeechAI.main import main
 from AudioToTranscribe.code import fetch_transcribe
@@ -188,11 +189,11 @@ async def download_audio_to_text(file: UploadFile = File(...)):
 
 @app.post("/download_instagram_profile_pic")
 async def download_instagram_profile_pic(input_data: str = Form(...)):
-    print("Downloading profile...", input_data)
+    # print("Downloading profile...", input_data)
     load_dotenv()  # Load environment variables from .env file
     INSTAGRAM_USERNAME = os.getenv("INSTAGRAM_USERNAME")
     INSTAGRAM_PASSWORD = os.getenv("INSTAGRAM_PASSWORD")
-    print("credentials----", INSTAGRAM_USERNAME, INSTAGRAM_PASSWORD)
+    # print("credentials----", INSTAGRAM_USERNAME, INSTAGRAM_PASSWORD)
     L = instaloader.Instaloader()
 
     # Login to Instagram
@@ -201,16 +202,16 @@ async def download_instagram_profile_pic(input_data: str = Form(...)):
     try:
         # Check if input is a URL
         parsed_url = urlparse(input_data)
-        print("parsed_url===========",parsed_url)
+        # print("parsed_url===========",parsed_url)
         if parsed_url.netloc == 'www.instagram.com':
             username = parsed_url.path.lstrip('/').split('/')[0]
-            print("username========",username)
+            # print("username========",username)
         else:
             # Input is a username
             username = input_data
 
         profile = instaloader.Profile.from_username(L.context, username)
-        print("Profile URL: " + profile.profile_pic_url)
+        # print("Profile URL: " + profile.profile_pic_url)
         target_folder = f"images_{username.lower()}"
         
         os.makedirs(target_folder, exist_ok=True)
@@ -247,3 +248,7 @@ async def embedded_video(file: UploadFile = File(...), text: str = Form(...)):
     # Return the path to the embedded video for download
     video_path = "output.mp4"
     return FileResponse(video_path, media_type="video/mp4", filename="output.mp4")
+
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)

@@ -15,6 +15,8 @@
         YouTube content – our free tools make every job a breeze.
       </h2>
     </div>
+
+    <div id="tools-heading"></div>
   
     <div class="container-fluid">
       <div class="row g-4 m-2">
@@ -133,4 +135,21 @@
 
     <!-- Content End -->
 
+
+<script>
+const text = "OUR TOOLS";
+let currentIndex = 0;
+const heading =  document.getElementById("tools-heading");
+
+function fillCharacter() {
+    const char = text[currentIndex];
+    const filledText = text.substring(0, currentIndex) + "<span style='color: #638d8b;'>" + char + "</span>" + text.substring(currentIndex + 1);
+    heading.innerHTML = filledText;
+    heading.style.transition = 'background-color 1.5s ease';
+    currentIndex = (currentIndex + 1) % text.length;
+}
+
+setInterval(fillCharacter, 200); 
+
+    </script>
   {% endblock %}
